@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Barryvdh\TranslationManager\Models\Translation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Input;
 
 class Controller extends BaseController
 {
@@ -47,7 +48,18 @@ class Controller extends BaseController
             ->with('numTranslations', $numTranslations)
             ->with('numChanged', $numChanged)
             ->with('editUrl', action('\Barryvdh\TranslationManager\Controller@postEdit', [$group]))
+            ->with('searchUrl', action('\Barryvdh\TranslationManager\Controller@getSearch'))
             ->with('deleteEnabled', $this->manager->getConfig('delete_enabled'));
+    }
+
+    public function getSearch()
+    {
+        $q = Input::get('q');
+        $translations = Translation::where('key', 'like', "%$q%")->orWhere('value', 'like', "%$q%")->orderBy('group', 'asc')->orderBy('key', 'asc')->get();
+        $numTranslations = count($translations);
+        return view('translation-manager::search')
+            ->with('translations', $translations)
+            ->with('numTranslations', $numTranslations);
     }
 
     public function getView($group = null)

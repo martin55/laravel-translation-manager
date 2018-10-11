@@ -79,6 +79,7 @@ class ManagerServiceProvider extends ServiceProvider {
         $router->group($config, function($router)
         {
             $router->get('view/{groupKey?}', 'Controller@getView')->where('groupKey', '.*');
+            $router->get('search/{group?}', 'Controller@getSearch')->name('search')->where('group', '.*');
             $router->get('/{groupKey?}', 'Controller@getIndex')->where('groupKey', '.*');
             $router->post('/add/{groupKey}', 'Controller@postAdd')->where('groupKey', '.*');
             $router->post('/edit/{groupKey}', 'Controller@postEdit')->where('groupKey', '.*');
